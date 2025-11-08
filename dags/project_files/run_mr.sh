@@ -15,8 +15,5 @@ if hadoop fs -test -d $output_dir3; then
 fi
 
 hadoop jar carrentals.jar $input_dir1 $output_dir3
-hadoop fs -cat $output_dir3/* | sed 's/,\\t/,/g' | hadoop fs -put - ${output_dir3}_clean/part-00000 
-hadoop fs -rm -r -f $output_dir3
-hadoop fs -mv ${output_dir3}_clean $output_dir3
 
 exit 0

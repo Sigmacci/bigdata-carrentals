@@ -58,6 +58,6 @@ public class CarYear implements WritableComparable<CarYear> {
 
     @Override
     public String toString() {
-        return this.carId.toString() + "," + this.year.toString() + ",";
+        return this.carId.toString() + "\t" + this.year.toString();
     }
 }

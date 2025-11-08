@@ -2,21 +2,6 @@ use default;
 ADD JAR /opt/hive/lib/opencsv-5.9.jar;
 ADD JAR /opt/hive/lib/hive-hcatalog-core-4.1.0.jar;
 
--- !sh hadoop fs -mkdir -p /tmp/output_mr_clean
--- !sh hadoop fs -cat ${hivevar:mapreduce_input}/* | sed 's/,\t/,/g' | hadoop fs -put - /tmp/output_mr_clean/part-00000
--- !sh hadoop fs -rm -r -f ${hivevar:mapreduce_input}
--- !sh hadoop fs -mv /tmp/output_mr_clean ${hivevar:mapreduce_input}
-
--- !sh mkdir /tmp/source
--- !sh mkdir /tmp/source/rentals
--- !sh cp merged_output.csv /tmp/source/rentals/
--- !sh hadoop fs -mkdir -p /tmp/source/rentals
--- !sh hadoop fs -put /tmp/source/rentals/merged_output.csv /tmp/source/rentals/
--- !sh mkdir /tmp/source/cars
--- !sh cp cars.csv /tmp/source/cars/
--- !sh hadoop fs -mkdir -p /tmp/source/cars
--- !sh hadoop fs -put /tmp/source/cars/cars.csv /tmp/source/cars/
-
 drop table if exists rentals_raw;
 create external table if not exists rentals_raw (
     car_id string,
@@ -25,7 +10,7 @@ create external table if not exists rentals_raw (
     completed_ratio float
 )
 row format delimited
-fields terminated by ','
+fields terminated by '\t'
 stored as textfile
 location '${hivevar:mapreduce_input}';
 
@@ -56,7 +41,7 @@ create external table if not exists cars_raw (
 row format serde 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 with serdeproperties (
     "separatorChar" = ",",
-    "quoteChar"     = "\"" --"
+    "quoteChar"     = "\""
 )
 location '${hivevar:hive_input}'
 tblproperties ("skip.header.line.count"="1");

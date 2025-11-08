@@ -18,7 +18,7 @@ public class CarRentalReducer extends Reducer<CarYear, TotalCompleted, Text, Tex
         }
 
         ratio = (double) totalCompleted.completed.get() / totalCompleted.total.get();
-        result.set(new Text(String.format("%d,%f", totalCompleted.total.get(), ratio)));
+        result.set(new Text(String.format("%d\t%f", totalCompleted.total.get(), ratio)));
         context.write(new Text(key.toString()), result);
     }
 }

@@ -33,10 +33,12 @@ public class CarRentalMapper extends Mapper<LongWritable, Text, CarYear, TotalCo
                     totalCompleted.set(one, status.equals("Completed") ? one : new IntWritable(0));
 
                     context.write(carYear, totalCompleted);
+                } else {
+                    throw new RuntimeException("Invalid format in line: " + lineText.toString());
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error: " + e.getMessage());
         }
     }
 }

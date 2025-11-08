@@ -72,18 +72,6 @@ with DAG(
         ),
     )
 
-    format_mr_output = BashOperator(
-        task_id="format_mr_output",
-        bash_command=(
-            "hadoop fs -cat {{ params.output_mr_dir }}/* | "
-            "sed 's/,\\t/,/g' | "
-            "hadoop fs -put - {{ params.output_mr_dir }}_clean/part-00000 && "
-            "hadoop fs -rm -r -f {{ params.output_mr_dir }} && "
-            "hadoop fs -mv {{ params.output_mr_dir }}_clean {{ params.output_mr_dir }}"
-        ),
-        trigger_rule="one_success",
-    )
-
     # Program Hive
     hive = BashOperator(
         task_id="hive",
@@ -109,6 +97,5 @@ with DAG(
     # Zależności
     [clean_output_mr_dir, clean_output_dir] >> pick_classic_or_streaming
     pick_classic_or_streaming >> [mapreduce_classic, hadoop_streaming]
-    [mapreduce_classic, hadoop_streaming] >> format_mr_output
-    format_mr_output >> hive
+    [mapreduce_classic, hadoop_streaming] >> hive
     hive >> get_output
